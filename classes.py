@@ -40,7 +40,8 @@ class ADN:
 		return len(self.seqGene)
 
 	def compteMaxGene(self):
-		return self.compteInActif()*(self.compteOutActif() + self.compteEncrActif()) - self.nbNodeInt 
+		return (self.compteInActif() + self.nbNodeInt)*(self.compteOutActif()\
+			+ self.nbNodeInt + self.compteEncrActif()) - self.nbNodeInt 
 	
 	def addNodeInt(self):
 		self.nbNodeInt += 1
@@ -112,7 +113,7 @@ class ADN:
 		return self.siEncrLibre.count(False)
 	
 	def compteEncrLibre(self):
-		return self.siEncrLibre.count(False)
+		return self.siEncrLibre.count(True)
 
 	def selectEncryptionTarget(self):
 		randGene = list(range(self.compteGene()))
@@ -161,7 +162,8 @@ class indiv:
 		self.score = 0
 		self.classement = 0
 		self.ptsMemeEspece = [0 for ind in range(param['nbIndiv'])]
-		
+		self.descendants = 0
+
 		i = param['nbInput']
 		o = param['nbOutput']
 		t = param['maxNodesInt']
@@ -170,7 +172,8 @@ class indiv:
 		self.maxOutputTotal = o*(i + 1) + t*(i + o + t)
 		self.offset = o - i
 		self.codeJoueur = 0
-		
+		self.maxTour = param['nbSimul']/2
+
 		self.input = inputIA(caracs)
 		self.inputNodeVal = [0 for x in range(i)]
 		self.inputNodeVal[0] = 1
@@ -178,26 +181,29 @@ class indiv:
 		
 	def miseAJourInput(self, jeu):
 		for i in range(len(jeu.nbCartes)):
-			self.input.nbCartesDispo[i] = jeu.nbCartes[i]
+			self.input.nbCartesDispo[i] = jeu.nbCartes[i]/jeu.nbCartesInit[i]
 		if jeu.joueurActif == self.codeJoueur:
 			self.input.siJoueurActif = 1
 		else:
 			self.input.siJoueurActif = 0
 		
-		self.input.nbTours = jeu.joueurs[self.codeJoueur].nbTours
-		self.input.phase = jeu.phase
-		self.input.actions = jeu.actions
-		self.input.pieces = jeu.pieces
-		self.input.achats = jeu.achats
-		self.input.carteActive = jeu.carteActive
+		self.input.nbTours = jeu.joueurs[self.codeJoueur].nbTours/self.maxTour
+		self.input.phase = jeu.phase/2
+		self.input.actions = jeu.actions/4
+		self.input.pieces = jeu.pieces/25
+		self.input.achats = jeu.achats/5
+		self.input.carteActive = jeu.carteActive/15
 		
-		self.input.nbCartesMain = len(jeu.joueurs[self.codeJoueur].main)
-		self.input.nbCartesPaquet = len(jeu.joueurs[self.codeJoueur].paquet)
-		self.input.nbCartesRecyclage = len(jeu.joueurs[self.codeJoueur].recyclage)
+		self.input.nbCartesMain = \
+			len(jeu.joueurs[self.codeJoueur].main)/16
+		self.input.nbCartesPaquet = \
+			len(jeu.joueurs[self.codeJoueur].paquet)/60
+		self.input.nbCartesRecyclage = \
+			len(jeu.joueurs[self.codeJoueur].recyclage)/60
 		
 		del self.input.codesCartesMain[:]
 		for c in jeu.joueurs[self.codeJoueur].main:
-			self.input.codesCartesMain.append(c.code)
+			self.input.codesCartesMain.append(c.code/15)
 	
 	def convertInput(self):
 		for i in range(len(self.input.nbCartesDispo)):
@@ -281,6 +287,7 @@ class indiv:
 		self.espece = 0
 		self.score = 0
 		self.classement = 0
+		self.descendants = 0
 
 class population:
 	
@@ -349,7 +356,8 @@ class jeu:
 	def __init__(self, ind0, ind1):
 		self.nbCartes = [14, 8, 8, 60, 40, 30, 10, 10, 10, 10, 10,\
 			10, 10, 10, 10, 10]
-			
+		self.nbCartesInit = [8, 8, 8, 46, 40, 30, 10, 10, 10, 10, 10,\
+			10, 10, 10, 10, 10]	
 		self.strategies = [ind0, ind1]
 		self.cartes = []
 		#self.rebut = []

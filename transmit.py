@@ -10,8 +10,7 @@ def speciation(param, pop):
 			memeEspece = False
 			for ind2 in pop.indiv:
 				if ind2.espece != 0:
-					if func.calcDistGenetique(ind1, ind2) <= \
-						param['seuilEspece']:
+					if func.calcDistGenetique(ind1, ind2) == 0:
 						memeEspece = True
 				if memeEspece:
 					ind1.espece = ind2.espece
@@ -45,8 +44,9 @@ def succesReproductif(param, pop):
 	for ind in pop.indiv:
 		if ind.classement <= param['nbSurv']:
 			for i in range(param['nbIndiv']):
-				if ind.espece == pop.indiv[i].espece:
-					if pop.indiv[i].classement <= param['nbSurv']:
+				if pop.indiv[i].classement <= param['nbSurv']:
+					if func.calcDistGenetique(ind, pop.indiv[i]) < \
+						param['seuilDistViable']:
 						ind.ptsMemeEspece[i] = pop.indiv[i].score
 
 def reproduction(param, pop, caracs):
@@ -57,17 +57,13 @@ def reproduction(param, pop, caracs):
 	for parent1 in pop.indiv:
 		if parent1.classement != 0:
 			parent2 = random.choices(pop.indiv, parent1.ptsMemeEspece)[0]
-			
+
 			for enfant in pop.indiv:
 				if enfant.nom == 0:
 					break
-			enfant.nom = pop.getProchNom()
-			enfant.parent1 = parent1.nom
-			enfant.parent2 = parent2.nom
 			
 			for g in parent1.ADN.seqGene:
 				genf = classes.gene()
-				
 				if parent2.ADN.tellSiGene(g.code):
 					if random.randrange(2):
 						g.copyTo(genf)
@@ -75,7 +71,6 @@ def reproduction(param, pop, caracs):
 						parent2.ADN.findGene(g.code).copyTo(genf)
 				else:
 					g.copyTo(genf)
-				
 				enfant.ADN.addGene(genf)
 			
 			for g in parent2.ADN.seqGene:
@@ -84,13 +79,31 @@ def reproduction(param, pop, caracs):
 					g.copyTo(genf)
 					enfant.ADN.addGene(genf)
 			
-			enfant.ADN.setNbNodeInt(parent1.ADN.nbNodeInt)	
+			if func.siCreationBoucleChezEnfant(param, enfant, caracs):
+				enfant.reset(param)
+				parent2 = parent1
+				for g in parent1.ADN.seqGene:
+					genf = classes.gene()
+					g.copyTo(genf)
+					enfant.ADN.addGene(genf)
+
+			enfant.ADN.setNbNodeInt\
+				(max(parent1.ADN.nbNodeInt, parent2.ADN.nbNodeInt))	
 			for g in enfant.ADN.seqGene:
 				enfant.ADN.siInLibre[g.inNode] = False
 				if g.outNode < enfant.ADN.encOffset :
 					enfant.ADN.siOutLibre[g.outNode] = False
 				else :
 					enfant.ADN.siEncrLibre[g.outNode] = False
+			
+			enfant.nom = pop.getProchNom()
+			enfant.parent1 = parent1.nom
+			enfant.parent2 = parent2.nom
+			if parent1.nom == parent2.nom:
+				parent1.descendants += 1
+			else:
+				parent1.descendants += 1
+				parent2.descendants += 1
 
 	for regen in pop.indiv:
 		if regen.nom == 0:

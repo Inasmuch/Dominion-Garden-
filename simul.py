@@ -12,7 +12,8 @@ def simulation(param, ind0, ind1, effets, caracs):
 	partie.miseEnPlace(caracs)
 	nbTours = 0
 	
-	while (nbTours < param['maxTours']) and (partie.nbCartes.count(0) < 3) and (partie.nbCartes[2] > 0):
+	while (nbTours < param['maxTours']) and (partie.nbCartes.count(0) < 3) \
+		and (partie.nbCartes[2] > 0):
 		#print ("Phase Action")
 		arret = False
 		while (partie.actions > 0) and (not(arret)):
@@ -40,38 +41,48 @@ def simulation(param, ind0, ind1, effets, caracs):
 		nbTours += 1
 	
 	ind = [ind0, ind1]
-	
-	if (nbTours < param['maxTours']) or (partie.nbCartes.count(0) >= 3) or (partie.nbCartes[2] == 0):
+
+	#for i in range(2):
+		#j = partie.joueurs[i]
+		#ind[i].score += j.main.count(partie.cartes[2]) + \
+			#j.recyclage.count(partie.cartes[2]) + \
+			#j.paquet.count(partie.cartes[2])
+
+	if (nbTours < param['maxTours']) or (partie.nbCartes.count(0) >= 3) \
+			or (partie.nbCartes[2] == 0):
 		vainqueur = partie.trouveVainqueur()
-		v = partie.joueurs[vainqueur]
-		ind[vainqueur].score += 51 - v.nbTours
+		ind[vainqueur].score += 1
+		#v = partie.joueurs[vainqueur]
+		#ind[vainqueur].score += int(param['maxTours']/2 + 1 - v.nbTours)
 
-		perdant = (vainqueur + 1) % 2
-		p = partie.joueurs[perdant]
+		#perdant = (vainqueur + 1) % 2
+		#p = partie.joueurs[perdant]
 
-		print(' ')
-		print ('    Vainqueur ' + str(ind[vainqueur].nom) + '.' + str(ind[vainqueur].espece) + ' tr ' + str(v.nbTours) +\
-			' pt ' + str(v.points))
-		for c in partie.cartes:
-			qte = v.main.count(c) + v.recyclage.count(c) + v.paquet.count(c)
-			if qte > 0:
-				print("   ", c.nom, ":", qte)
+		#print(' ')
+		#print ('    Vainqueur ' + str(ind[vainqueur].nom) + '.' + \
+		#	str(ind[vainqueur].espece) + ' tr ' + str(v.nbTours) +\
+		#	' pt ' + str(v.points))
+		#for c in partie.cartes:
+		#	qte = v.main.count(c) + v.recyclage.count(c) + v.paquet.count(c)
+		#	if qte > 0:
+		#		print("   ", c.nom, ":", qte)
 		
-		print(' ')
-		print ('Perdant ' + str(ind[perdant].nom) + '.' + str(ind[perdant].espece) + ' tr ' + str(p.nbTours) +\
-			' pt ' + str(p.points))
-		for c in partie.cartes:
-			qte = p.main.count(c) + p.recyclage.count(c) + p.paquet.count(c)
-			if qte > 0:	
-				print(c.nom, ":", qte)
+		#print(' ')
+		#print ('Perdant ' + str(ind[perdant].nom) + '.' + \
+		#	str(ind[perdant].espece) + ' tr ' + str(p.nbTours) +\
+		#	' pt ' + str(p.points))
+		#for c in partie.cartes:
+		#	qte = p.main.count(c) + p.recyclage.count(c) + p.paquet.count(c)
+		#	if qte > 0:	
+		#		print(c.nom, ":", qte)
 	
-	else:
-		fauxVainqueur = partie.trouveVainqueur()
-		for j in partie.joueurs:
-			print(' ')
-			print ('ID ' + str(ind[j.code].nom) + '.' + str(ind[j.code].espece) + ' tr ' + str(j.nbTours) +\
-			' pt ' + str(j.points))
-			for c in partie.cartes:
-				qte = j.main.count(c) + j.recyclage.count(c) + j.paquet.count(c)
-				if qte > 0:	
-					print (c.nom, ":", qte)
+	#else:
+	#	fauxVainqueur = partie.trouveVainqueur()
+	#	for j in partie.joueurs:
+	#		print(' ')
+	#		print ('ID ' + str(ind[j.code].nom) + '.' + str(ind[j.code].espece) + ' tr ' + str(j.nbTours) +\
+	#		' pt ' + str(j.points))
+	#		for c in partie.cartes:
+	#			qte = j.main.count(c) + j.recyclage.count(c) + j.paquet.count(c)
+	#			if qte > 0:	
+	#				print (c.nom, ":", qte)
