@@ -6,7 +6,7 @@ def calcDistGenetique(ind1, ind2):
 	for g in ind1.ADN.seqGene:
 		if ind2.ADN.tellSiGene(g.code):
 			nbGeneUnique -= 2
-	return nbGeneUnique/nbGeneTotal
+	return (nbGeneUnique/nbGeneTotal)*1000
 
 def normale(x):
 	if x > 1:
@@ -34,6 +34,35 @@ def siCreationBoucle(param, ind, inNode, outNode, caracs):
 	for node in range(param['nbOutput']):
 		boolCreationBoucle = boolCreationBoucle or\
 			recSiBoucle(param, mannequin, node, 1)
+	
+	for encrNode in range(mannequin.ADN.encOffset, mannequin.maxOutputTotal):
+		boolCreationBoucle = boolCreationBoucle or\
+			recSiBoucle(param, mannequin, encrNode, 1)
+	
+	return boolCreationBoucle
+
+def siCreationBoucleChezEnfant(param, enfant, caracs):
+	#mannequin = classes.indiv(param, caracs)
+	#for g in par1.ADN.seqGene:
+	#	gmanq = classes.gene()
+	#	g.copyTo(gmanq)
+	#	mannequin.ADN.addGene(gmanq)
+	
+	#for g in par2.ADN.seqGene:
+	#	if not mannequin.ADN.tellSiGene(g.code):
+	#		gmanq = classes.gene()
+	#		g.copyTo(gmanq)
+	#		mannequin.ADN.addGene(gmanq)
+	
+	boolCreationBoucle = False
+	
+	for node in range(param['nbOutput']):
+		boolCreationBoucle = boolCreationBoucle or\
+			recSiBoucle(param, enfant, node, 1)
+
+	for encrNode in range(enfant.ADN.encOffset, enfant.maxOutputTotal):
+		boolCreationBoucle = boolCreationBoucle or\
+			recSiBoucle(param, enfant, encrNode, 1)
 	
 	return boolCreationBoucle
 

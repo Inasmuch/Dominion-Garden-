@@ -76,7 +76,6 @@ def writeForReplay(ind):
 		txt.write('nodeInt: ' + str(ind.ADN.nbNodeInt)+'; ')
 		txt.write('score: ' + str(ind.score)+'; ')
 		txt.write('classement: ' + str(ind.classement).zfill(3) + '\n')
-#		txt.write('ptsMemeEspece: ' + str(ind.ptsMemeEspece)+'\n')
 		for g in ind.ADN.seqGene:
 			txt.write(str(g.inNode) + '; ')
 			txt.write(str(g.outNode) + '; ')
@@ -84,7 +83,21 @@ def writeForReplay(ind):
 			txt.write(str(g.active) + '; ')
 			txt.write(str(g.code) + '\n')
 		txt.write('\n')
-			
+
+def printInd(ind):
+	print("Nom:", ind.nom, "Espece:", ind.espece, "Age:", \
+	   ind.age, "Dscdts:", ind.descendants, "Par1:", ind.parent1, \
+	   "Par2:", ind.parent2)
+	print("nbGenes:", ind.ADN.compteGene(), "nbNodeInt:", ind.ADN.nbNodeInt, \
+	   "nbNodeEncr:", ind.ADN.compteEncrActif(), "Score:", ind.score)
+	for g in ind.ADN.seqGene:
+		print(g.inNode, g.outNode, g.weight, g.active, g.code)
+	print("Nom:", ind.nom, "Espece:", ind.espece, "Age:", \
+	   ind.age, "Dscdts:", ind.descendants, "Par1:", ind.parent1, \
+	   "Par2:", ind.parent2)
+	print("nbGenes:", ind.ADN.compteGene(), "nbNodeInt:", ind.ADN.nbNodeInt, \
+	   "nbNodeEncr:", ind.ADN.compteEncrActif(), "Score:", ind.score)
+
 def writeRecursionException(pop, inderr):
 	with open('error.txt', 'w') as txt:
 		txt.write('___________________Broken Individual___________________\n')
@@ -133,6 +146,8 @@ def exportForExcelAnalysis(pop):
 				else:
 					txt.write(str(int(ind.score)) + ';')
 				txt.write(str(ind.classement) + ';')
+				#txt.write(str(ind.age) + ';')
+				#txt.write(str(ind.descendants) + ';')
 				txt.write(str(g.inNode) + ';')
 				txt.write(str(g.outNode) + ';')
 				if g.weight < 0:

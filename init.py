@@ -143,24 +143,22 @@ def replayPopFromText(param, pop, caracs):
 			
 			j = i + 1
 			while txtpop[j] != '\n':
-				if txtpop[j].split()[3][:-1] == 'True':
 					
-					g = classes.gene()
+				g = classes.gene()
+				
+				g.inNode = int(txtpop[j].split()[0][:-1])
+				g.outNode = int(txtpop[j].split()[1][:-1])
+				g.weight = float(txtpop[j].split()[2][:-1])
+				g.active = bool(txtpop[j].split()[3][:-1] == 'True')
+				g.code = int(txtpop[j].split()[4])
 					
-					g.inNode = int(txtpop[j].split()[0][:-1])
-					g.outNode = int(txtpop[j].split()[1][:-1])
-					g.weight = float(txtpop[j].split()[2][:-1])
-					g.active = True
-					g.code = int(txtpop[j].split()[4])
+				ind.ADN.addGene(g)
 					
-					ind.ADN.addGene(g)
-					
-					
-					ind.ADN.siInLibre[g.inNode] = False
-					if g.outNode < ind.ADN.encOffset :
-						ind.ADN.siOutLibre[g.outNode] = False
-					else :
-						ind.ADN.siEncrLibre[g.outNode] = False
+				ind.ADN.siInLibre[g.inNode] = False
+				if g.outNode < ind.ADN.encOffset :
+					ind.ADN.siOutLibre[g.outNode] = False
+				else :
+					ind.ADN.siEncrLibre[g.outNode] = False
 				j += 1
 				
 			ind.nom = pop.getProchNom()
@@ -174,39 +172,37 @@ def loadPopFromText(param, pop, caracs):
 			
 	for i in range(len(txtpop)):
 		if txtpop[i][:4] == 'nom:':
-			
-			ind = classes.indiv(param, caracs)
-			ind.ADN.setNbNodeInt(int(txtpop[i].split()[13][:-1]))
+			if int(txtpop[i].split()[17]) <= param['nbIndiv']:
+				ind = classes.indiv(param, caracs)
+				ind.ADN.setNbNodeInt(int(txtpop[i].split()[13][:-1]))
 
-			j = i + 1
-			while txtpop[j] != '\n':
-				#if txtpop[j].split()[3][:-1] == 'True':
+				j = i + 1
+				while txtpop[j] != '\n':
+					g = classes.gene()
 					
-				g = classes.gene()
-					
-				g.inNode = int(txtpop[j].split()[0][:-1])
-				g.outNode = int(txtpop[j].split()[1][:-1])
-				g.weight = float(txtpop[j].split()[2][:-1])
-				g.active = bool(txtpop[j].split()[3][:-1])
-				g.code = int(txtpop[j].split()[4])
+					g.inNode = int(txtpop[j].split()[0][:-1])
+					g.outNode = int(txtpop[j].split()[1][:-1])
+					g.weight = float(txtpop[j].split()[2][:-1])
+					g.active = bool(txtpop[j].split()[3][:-1] == 'True')
+					g.code = int(txtpop[j].split()[4])
 				
-				if pop.arbreGen[g.inNode][g.outNode] == 0:
-					pop.arbreGen[g.inNode][g.outNode] = g.code
-					if g.code > pop.prochCode:
-						pop.prochCode = g.code
+					if pop.arbreGen[g.inNode][g.outNode] == 0:
+						pop.arbreGen[g.inNode][g.outNode] = g.code
+						if g.code > pop.prochCode:
+							pop.prochCode = g.code
 					
-				ind.ADN.addGene(g)
+					ind.ADN.addGene(g)
 					
-				ind.ADN.siInLibre[g.inNode] = False
-				if g.outNode < ind.ADN.encOffset :
-					ind.ADN.siOutLibre[g.outNode] = False
-				else :
-					ind.ADN.siEncrLibre[g.outNode] = False	
+					ind.ADN.siInLibre[g.inNode] = False
+					if g.outNode < ind.ADN.encOffset :
+						ind.ADN.siOutLibre[g.outNode] = False
+					else :
+						ind.ADN.siEncrLibre[g.outNode] = False	
 					
-				j += 1
+					j += 1
 				
-			ind.nom = pop.getProchNom()
-			pop.addIndiv(ind)
+				ind.nom = pop.getProchNom()
+				pop.addIndiv(ind)
 
 
 def loadPopForAnalysis(param, pop, caracs):
@@ -232,7 +228,7 @@ def loadPopForAnalysis(param, pop, caracs):
 				g.inNode = int(txtpop[j].split()[0][:-1])
 				g.outNode = int(txtpop[j].split()[1][:-1])
 				g.weight = float(txtpop[j].split()[2][:-1])
-				g.active = bool(txtpop[j].split()[3][:-1])
+				g.active = bool(txtpop[j].split()[3][:-1] == 'True')
 				g.code = int(txtpop[j].split()[4])
 					
 				ind.ADN.addGene(g)
@@ -261,7 +257,7 @@ def seedPopFromCore(param, pop, caracs):
 				g.inNode = int(txtpop[j].split()[0][:-1])
 				g.outNode = int(txtpop[j].split()[1][:-1])
 				g.weight = float(txtpop[j].split()[2][:-1])
-				g.active = bool(txtpop[j].split()[3][:-1])
+				g.active = bool(txtpop[j].split()[3][:-1] == 'True')
 				g.code = int(txtpop[j].split()[4])
 				
 				if pop.arbreGen[g.inNode][g.outNode] == 0:
@@ -300,7 +296,7 @@ def seedPopFromCore(param, pop, caracs):
 				clone.ADN.siEncrLibre[g.outNode] = False	
 			
 		for nvlInput in range(param['inputSupInit']):
-				mutation.creationInput(pop, clone)
+			mutation.creationInput(pop, clone)
 		for nvlOutput in range(param['outputSupInit']):
 			mutation.creationOutput(param, pop, clone, caracs)
 		for connexion in range(param['connexInit']):
